@@ -7,18 +7,19 @@ import (
 	"net/http"
 )
 
+// Run the application with currently-hard-coded values
 func main() {
 	url := buildURL(region[32], categoryMap["cars & trucks - by owner"], "subaru+impreza")
-	//resp := executeRequest(url)
-	//strResp := byteArrayAsString(resp)
+	//resp := byteArrayAsString(executeRequest(url))
 	fmt.Println(url)
 }
 
-var scheme = "https://"
-var base = ".craigslist.org"
-var search = "/search/"
-var query = "?query="
+var scheme = "https://"      // Craiglist uses HTTPS protocol
+var base = ".craigslist.org" // URL base for the Craigslist domain
+var search = "/search/"      // Currently, this will always immediately follow the base
+var query = "?query="        // Denotes the queryString, required by craigslist in order to complete the search
 
+// Builds a URL from region, category, and keywords provided
 func buildURL(region string, category string, keywords string) string {
 	if &region == nil {
 		log.Fatal("Region cannot be nil")
@@ -33,6 +34,7 @@ func buildURL(region string, category string, keywords string) string {
 	return url
 }
 
+// Executes an http GET request for the provided URL, and if successful, returns the web page contents as a byte array
 func executeRequest(url string) []byte {
 	resp, err := http.Get(url)
 	if err != nil {
@@ -46,10 +48,13 @@ func executeRequest(url string) []byte {
 	return body
 }
 
+// Returns the string representation of the provided byte array
 func byteArrayAsString(arr []byte) string {
 	return string(arr[:])
 }
 
+// A map of human-readable categories to their Craigslist shorthand. This map is not currently a comprehensive mapping of the full list of categories
+// This map is not currently immutable but should not be mutated anywhere in the codebase
 var categoryMap = map[string]string{
 	"apts broker fee":                     "fee",
 	"apts broker no fee":                  "nfb",
@@ -111,6 +116,7 @@ var categoryMap = map[string]string{
 	"trailers - by dealer":                "trd",
 }
 
+// A list of all Craiglist regions for the application to loop through on its quest to get results from every region
 var region = []string{
 	"albany",
 	"allentown",
