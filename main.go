@@ -5,16 +5,18 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/gocolly/colly"
 )
 
 // Run the application with currently-hard-coded values
 func main() {
-	url := buildURL(regions[32], categoryMap["cars & trucks - by owner"], "subaru+impreza")
+	url := buildURL(regions[32], categoryMap["cars & trucks - by owner"], "subaru")
 	//resp := byteArrayAsString(executeRequest(url))
 	fmt.Println(url)
-	scrapeCL(categoryMap["cars & trucks - by owner"], "subaru+impreza")
+	scrapeCL(categoryMap["cars & trucks - by owner"], "subaru")
 }
 
 var scheme = "https://"      // Craiglist uses HTTPS protocol
@@ -37,11 +39,14 @@ func buildURL(region string, category string, keywords string) string {
 	return url
 }
 
-func scrapeCL(category string, keywords string) {
-	links := make(map[string]struct{})
+// Scrapes craigslist searches for the given category and keywords across all regions
+func scrapeCL(category string, keywords string) []string {
+	linkSet := make(map[string]struct{})
 	c := colly.NewCollector(
-	// Only allow requests to craigslist
+	// Only allow requests to craigslist - Currently doesn't work because it thinks *.craigslist.com is not the same as craigslist.com
 	//colly.AllowedDomains("https://craigslist.org"),
+	// Enable Async execution - Currently doesn't work for unknown reasons. Panics every time. Need to investigate later
+	//colly.Async(true),
 	)
 
 	c.OnRequest(func(r *colly.Request) {
@@ -50,8 +55,21 @@ func scrapeCL(category string, keywords string) {
 
 	c.OnHTML("a.result-title.hdrlnk", func(h *colly.HTMLElement) {
 		t := h.Attr("href")
-		fmt.Println(t)
-		links[t] = struct{}{}
+		linkSet[t] = struct{}{}
+	})
+
+	c.OnHTML("a.button.next", func(h *colly.HTMLElement) {
+		u := h.Attr("href")
+		if &u != nil && u != "" {
+			nextURL := strings.Split(h.Response.Request.URL.String(), "/search")[0] + u
+			fmt.Println("Followed Next: ", nextURL)
+			c.Visit(nextURL)
+		}
+	})
+
+	c.Limit(&colly.LimitRule{
+		Parallelism: 3,
+		RandomDelay: 3 * time.Second,
 	})
 
 	for _, region := range regions {
@@ -62,19 +80,29 @@ func scrapeCL(category string, keywords string) {
 		}
 	}
 	c.Wait()
-	fmt.Println(links)
+
+	// Using append() is about 20% slower than directly assigning values
+	links := make([]string, len(linkSet))
+	i := 0
+	for l := range linkSet {
+		//fmt.Println(strconv.Itoa(i) + " - " + l)
+		links[i] = l
+		i++
+	}
+
+	return links
 }
 
 // Executes an http GET request for the provided URL, and if successful, returns the web page contents as a byte array
 func executeRequest(url string) []byte {
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Fatal(err) // TODO: This, but better
+		log.Fatal(err)
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal(err) // TODO: This, but better
+		log.Fatal(err)
 	}
 	return body
 }

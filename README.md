@@ -7,5 +7,6 @@ This little app boy is going to eventually search through all of Craigslist inst
 - This baby has lots of info on the stuff we'll need to make the urls: https://www.craigslist.org/about/bulk_posting_interface
 
 ## TODO:
-- Click the 'next' button and add all its links. (Currently, we only scrape the first page)
 - Add a Web UI
+- Restrict only to Craigslist domain
+- Enable Async in web crawler
