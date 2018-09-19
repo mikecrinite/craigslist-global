@@ -10,3 +10,4 @@ This little app boy is going to eventually search through all of Craigslist inst
 - Add a Web UI
 - Restrict only to Craigslist domain (see https://github.com/gocolly/colly/issues/58)
 - Enable Async in web crawler
+- Some sort of way to select multiple regions (You might want to search North Jersey, Central NJ, South Jersey, and Philadelphia but not Seattle or something). Also maybe some way to say "closest N regions to zip XXXXX"
