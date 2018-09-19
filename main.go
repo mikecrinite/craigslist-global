@@ -5,13 +5,16 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/gocolly/colly"
 )
 
 // Run the application with currently-hard-coded values
 func main() {
-	url := buildURL(region[32], categoryMap["cars & trucks - by owner"], "subaru+impreza")
+	url := buildURL(regions[32], categoryMap["cars & trucks - by owner"], "subaru+impreza")
 	//resp := byteArrayAsString(executeRequest(url))
 	fmt.Println(url)
+	scrapeCL(categoryMap["cars & trucks - by owner"], "subaru+impreza")
 }
 
 var scheme = "https://"      // Craiglist uses HTTPS protocol
@@ -32,6 +35,34 @@ func buildURL(region string, category string, keywords string) string {
 	}
 	url := scheme + region + base + search + category + query + keywords
 	return url
+}
+
+func scrapeCL(category string, keywords string) {
+	links := make(map[string]struct{})
+	c := colly.NewCollector(
+	// Only allow requests to craigslist
+	//colly.AllowedDomains("https://craigslist.org"),
+	)
+
+	c.OnRequest(func(r *colly.Request) {
+		fmt.Println("\nMaking request to: ", r.URL)
+	})
+
+	c.OnHTML("a.result-title.hdrlnk", func(h *colly.HTMLElement) {
+		t := h.Attr("href")
+		fmt.Println(t)
+		links[t] = struct{}{}
+	})
+
+	for _, region := range regions {
+		url := buildURL(region, category, keywords)
+		err := c.Visit(url)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	c.Wait()
+	fmt.Println(links)
 }
 
 // Executes an http GET request for the provided URL, and if successful, returns the web page contents as a byte array
@@ -99,6 +130,7 @@ var categoryMap = map[string]string{
 	"auto wheels & tires - by dealer":     "wtd",
 	"boats - by dealer":                   "bod",
 	"business/commercial - by dealer":     "bfd",
+	"cars & trucks - by owner/dealer":     "cta",
 	"cars & trucks - by dealer":           "ctd",
 	"cars & trucks - by owner":            "cto",
 	"cell phones - by dealer":             "mod",
@@ -117,7 +149,7 @@ var categoryMap = map[string]string{
 }
 
 // A list of all Craiglist regions for the application to loop through on its quest to get results from every region
-var region = []string{
+var regions = []string{
 	"albany",
 	"allentown",
 	"altoona",
