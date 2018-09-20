@@ -42,11 +42,28 @@ func buildURL(region string, category string, keywords string) string {
 // Scrapes craigslist searches for the given category and keywords across all regions
 func scrapeCL(category string, keywords string) []string {
 	linkSet := make(map[string]struct{})
+	linkChannel := make(chan string)
+	doneChannel := make(chan bool)
+
+	go func() {
+		for {
+			t, more := <-linkChannel
+			// fmt.Println(t)
+			linkSet[t] = struct{}{}
+			if !more {
+				break
+			}
+		}
+
+		fmt.Println("We done")
+		doneChannel <- true
+		return
+	}()
+
 	c := colly.NewCollector(
-	// Only allow requests to craigslist - Currently doesn't work because it thinks *.craigslist.com is not the same as craigslist.com
-	//colly.AllowedDomains("https://craigslist.org"),
-	// Enable Async execution - Currently doesn't work for unknown reasons. Panics every time. Need to investigate later
-	//colly.Async(true),
+		// Only allow requests to craigslist - Currently doesn't work because it thinks *.craigslist.com is not the same as craigslist.com
+		//colly.AllowedDomains("https://craigslist.org"),
+		colly.Async(true),
 	)
 
 	c.OnRequest(func(r *colly.Request) {
@@ -55,7 +72,8 @@ func scrapeCL(category string, keywords string) []string {
 
 	c.OnHTML("a.result-title.hdrlnk", func(h *colly.HTMLElement) {
 		t := h.Attr("href")
-		linkSet[t] = struct{}{}
+		linkChannel <- t
+		//linkSet[t] = struct{}{}
 	})
 
 	c.OnHTML("a.button.next", func(h *colly.HTMLElement) {
@@ -79,7 +97,11 @@ func scrapeCL(category string, keywords string) []string {
 			log.Fatal(err)
 		}
 	}
+
 	c.Wait()
+	close(linkChannel)
+
+	<-doneChannel
 
 	// Using append() is about 20% slower than directly assigning values
 	links := make([]string, len(linkSet))

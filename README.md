@@ -9,4 +9,3 @@ This little app boy is going to eventually search through all of Craigslist inst
 ## TODO:
 - Add a Web UI
 - Restrict only to Craigslist domain
-- Enable Async in web crawler
