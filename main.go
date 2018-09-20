@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"regexp"
 	"strings"
 	"time"
 
@@ -48,7 +49,6 @@ func scrapeCL(category string, keywords string) []string {
 	go func() {
 		for {
 			t, more := <-linkChannel
-			// fmt.Println(t)
 			linkSet[t] = struct{}{}
 			if !more {
 				break
@@ -61,10 +61,12 @@ func scrapeCL(category string, keywords string) []string {
 	}()
 
 	c := colly.NewCollector(
-		// Only allow requests to craigslist - Currently doesn't work because it thinks *.craigslist.com is not the same as craigslist.com
-		//colly.AllowedDomains("https://craigslist.org"),
 		colly.Async(true),
 	)
+
+	c.URLFilters = []*regexp.Regexp{
+		regexp.MustCompile(`^https?://[a-z]+\.craigslist\.org/*`),
+	}
 
 	c.OnRequest(func(r *colly.Request) {
 		fmt.Println("\nMaking request to: ", r.URL)
@@ -73,7 +75,6 @@ func scrapeCL(category string, keywords string) []string {
 	c.OnHTML("a.result-title.hdrlnk", func(h *colly.HTMLElement) {
 		t := h.Attr("href")
 		linkChannel <- t
-		//linkSet[t] = struct{}{}
 	})
 
 	c.OnHTML("a.button.next", func(h *colly.HTMLElement) {
