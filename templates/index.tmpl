@@ -7,6 +7,9 @@
     <form action="/" method="post">
         <input type="text" id="search" name="search" placeholder="search">
         <select name="category">
+            {{ if .selected }}
+                <option value="{{ .selected }}" selected="selected">{{ .selected }}</option>
+            {{ end }}
             {{ range .categories }}
                 <option value="{{ . }}">{{ . }}</option>
             {{ end }}

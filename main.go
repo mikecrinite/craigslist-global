@@ -34,6 +34,7 @@ func main() {
 			"title":      "craigslist-global",
 			"categories": categoryMapKeys(),
 			"links":      scrapeCL(categoryMap[category], cleanForQuery(query)),
+			"selected":   category,
 		})
 	})
 	r.Run(":8095") // 0.0.0.0:8095
