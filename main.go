@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"sort"
 	"strings"
 	"time"
 
@@ -169,6 +170,8 @@ func categoryMapKeys() []string {
 		keys[i] = k
 		i++
 	}
+
+	sort.Strings(keys)
 
 	return keys
 }
