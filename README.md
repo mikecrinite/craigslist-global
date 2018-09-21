@@ -9,6 +9,5 @@ This little app boy is going to eventually search through all of Craigslist inst
 ## TODO:
 - Properly escape spaces in search (right now it literally replaces every space with a +) - Investigate: https://golang.org/pkg/net/url/#QueryEscape
 - Some sort of way to select multiple regions (You might want to search North Jersey, Central NJ, South Jersey, and Philadelphia but not Seattle or something). Also maybe some way to say "closest N regions to zip XXXXX"
-- Refactor duplicated code for creating slice from map
 - Get comprehensive lists of categories and regions for truly G L O B A L searching
 - Prettier UI
