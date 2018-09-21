@@ -7,5 +7,7 @@ This little app boy is going to eventually search through all of Craigslist inst
 - This baby has lots of info on the stuff we'll need to make the urls: https://www.craigslist.org/about/bulk_posting_interface
 
 ## TODO:
-- Add a Web UI
+- Keep category when loading new page
+- Load categories into select options in alphabetical order
+- Properly escape spaces in search (right now it literally replaces every space with a +)
 - Some sort of way to select multiple regions (You might want to search North Jersey, Central NJ, South Jersey, and Philadelphia but not Seattle or something). Also maybe some way to say "closest N regions to zip XXXXX"

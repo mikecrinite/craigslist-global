@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <h1>
+        {{ .title }}
+    </h1>
+
+    <form action="/" method="post">
+        <input type="text" id="search" name="search" placeholder="search">
+        <select name="category">
+            {{ range .categories }}
+                <option value="{{ . }}">{{ . }}</option>
+            {{ end }}
+        </select>
+        <button type="submit">Search</button>
+    </form>
+
+    {{ range .links }}
+    <div>
+        <a href="{{ . }}"><p>{{ . }}</p></a>
+    </div>
+
+    {{ end }}
+</html>

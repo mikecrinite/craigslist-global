@@ -9,15 +9,37 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/gocolly/colly"
 )
 
 // Run the application with currently-hard-coded values
 func main() {
-	url := buildURL(regions[32], categoryMap["cars & trucks - by owner"], "subaru")
-	//resp := byteArrayAsString(executeRequest(url))
-	fmt.Println(url)
-	scrapeCL(categoryMap["cars & trucks - by owner"], "subaru")
+	//fmt.Println(url)
+	//links := scrapeCL(categoryMap["cars & trucks - by owner"], "subaru")
+	r := gin.Default()
+	r.LoadHTMLGlob("templates/*")
+	r.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.tmpl", gin.H{
+			"title":      "craigslist-global",
+			"categories": categoryMapKeys(),
+		})
+	})
+	r.POST("/", func(c *gin.Context) {
+		query := c.PostForm("search")
+		category := c.PostForm("category")
+
+		c.HTML(http.StatusOK, "index.tmpl", gin.H{
+			"title":      "craigslist-global",
+			"categories": categoryMapKeys(),
+			"links":      scrapeCL(categoryMap[category], cleanForQuery(query)),
+		})
+	})
+	r.Run(":8095") // 0.0.0.0:8095
+}
+
+func cleanForQuery(dirty string) string {
+	return strings.Replace(dirty, " ", "+", -1)
 }
 
 var scheme = "https://"      // Craiglist uses HTTPS protocol
@@ -42,6 +64,10 @@ func buildURL(region string, category string, keywords string) string {
 
 // Scrapes craigslist searches for the given category and keywords across all regions
 func scrapeCL(category string, keywords string) []string {
+	if &keywords == nil || keywords == "" {
+		return []string{}
+	}
+
 	linkSet := make(map[string]struct{})
 	linkChannel := make(chan string)
 	doneChannel := make(chan bool)
@@ -55,7 +81,6 @@ func scrapeCL(category string, keywords string) []string {
 			}
 		}
 
-		fmt.Println("We done")
 		doneChannel <- true
 		return
 	}()
@@ -69,7 +94,7 @@ func scrapeCL(category string, keywords string) []string {
 	}
 
 	c.OnRequest(func(r *colly.Request) {
-		fmt.Println("\nMaking request to: ", r.URL)
+		fmt.Println("Making request to: ", r.URL)
 	})
 
 	c.OnHTML("a.result-title.hdrlnk", func(h *colly.HTMLElement) {
@@ -81,7 +106,7 @@ func scrapeCL(category string, keywords string) []string {
 		u := h.Attr("href")
 		if &u != nil && u != "" {
 			nextURL := strings.Split(h.Response.Request.URL.String(), "/search")[0] + u
-			fmt.Println("Followed Next: ", nextURL)
+			//fmt.Println("Followed Next: ", nextURL)
 			c.Visit(nextURL)
 		}
 	})
@@ -133,6 +158,19 @@ func executeRequest(url string) []byte {
 // Returns the string representation of the provided byte array
 func byteArrayAsString(arr []byte) string {
 	return string(arr[:])
+}
+
+// Gets a full slice of keys from the categoryMap below
+func categoryMapKeys() []string {
+	keys := make([]string, len(categoryMap))
+
+	i := 0
+	for k := range categoryMap {
+		keys[i] = k
+		i++
+	}
+
+	return keys
 }
 
 // A map of human-readable categories to their Craigslist shorthand. This map is not currently a comprehensive mapping of the full list of categories
