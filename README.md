@@ -1,5 +1,6 @@
 # craigslist-global
-A Golang app that allows for Craigslist searches in more than one region
+A Golang app that allows for Craigslist searches in more than one region.
+Still very much a work in progress.
 
 ## Author
 - Michael Crinite
