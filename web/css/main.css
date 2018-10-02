@@ -1,3 +1,19 @@
 h1 {
     text-align: center;
 }
+
+.post {
+    height: 200px;
+}
+
+.image > a > img{
+    max-height: 75%;
+    height: auto;
+    width: auto;
+}
+
+.image > a > span {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+}

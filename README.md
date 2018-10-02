@@ -1,6 +1,9 @@
 # craigslist-global
 A Golang app that allows for Craigslist searches in more than one region.
-Still very much a work in progress.
+Still very much a work in progress:
+- Right now it's ironically limited to one geographical region, and that is Northeast USA (this will obviously change soon to fit the scope of the project)
+- There are probably many bugs.
+- Right now the only thing guaranteed to work decently is cto, ctd, cta, as that was the catalyst for writing it in the first place
 
 ## Author
 - Michael Crinite
@@ -33,4 +36,6 @@ Uhh.... not yet
 - Get comprehensive lists of categories and regions for truly G L O B A L searching
 - Prettier UI: Add CSS
 - Properly escape spaces in search (right now it literally replaces every space with a +) - Investigate: https://golang.org/pkg/net/url/#QueryEscape
+- Get the titles in a better way. Right now it's url parsing, when it should be grabbing it from the same place that CL gets theirs, which would mean parsing the list items as the root element rather than the post href
+
 
