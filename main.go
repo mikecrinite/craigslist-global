@@ -12,6 +12,7 @@ import (
 // Run the application
 func main() {
 	r := gin.Default()
+	r.Static("/css", "./web/css")
 	r.LoadHTMLGlob("web/templates/*")
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{
@@ -22,11 +23,12 @@ func main() {
 	r.POST("/", func(c *gin.Context) {
 		query := c.PostForm("search")
 		category := c.PostForm("category")
+		posts := controller.ScrapeCL(model.CategoryMap[category], controller.CleanForQuery(query))
 
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{
 			"title":      "craigslist-global",
 			"categories": model.CategoryMapKeys(),
-			"links":      controller.ScrapeCL(model.CategoryMap[category], controller.CleanForQuery(query)),
+			"links":      posts,
 			"selected":   category,
 		})
 	})
