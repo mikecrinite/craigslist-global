@@ -3,8 +3,8 @@ package main
 import (
 	"net/http"
 
-	"github.com/mikecrinite/craigslist-go/controller"
-	"github.com/mikecrinite/craigslist-go/model"
+	"github.com/mikecrinite/craigslist-global/controller"
+	"github.com/mikecrinite/craigslist-global/model"
 
 	"github.com/gin-gonic/gin"
 )
