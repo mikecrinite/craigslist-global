@@ -31,11 +31,10 @@ $ GIN_MODE=release go run main.go
 Uhh.... not yet
 
 ## TODO:
-- Add photos to each post (expand posts in general to look more like the actual Craigslist counterparts)
 - Some sort of way to select multiple regions (You might want to search North Jersey, Central NJ, South Jersey, and Philadelphia but not Seattle or something). Also maybe some way to say "closest N regions to zip XXXXX"
 - Get comprehensive lists of categories and regions for truly G L O B A L searching
-- Prettier UI: Add CSS
 - Properly escape spaces in search (right now it literally replaces every space with a +) - Investigate: https://golang.org/pkg/net/url/#QueryEscape
 - Get the titles in a better way. Right now it's url parsing, when it should be grabbing it from the same place that CL gets theirs, which would mean parsing the list items as the root element rather than the post href
+- Even PRETTIER UI: Fix any CSS problems, consider adding JS for things go doesn't do well
 
 
