@@ -1,0 +1,16 @@
+language: go
+
+go:
+  - master
+
+env:
+  - GO111MODULE=on
+
+go_import_path: github.com/mikecrinite/craigslist-global
+
+install:
+  - go mod download
+
+script:
+  - go build
+  - go test || true
