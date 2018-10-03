@@ -13,6 +13,7 @@ import (
 func main() {
 	r := gin.Default()
 	r.Static("/css", "./web/css")
+	r.Static("/img", "./web/img")
 	r.LoadHTMLGlob("web/templates/*")
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{

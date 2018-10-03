@@ -4,39 +4,41 @@
     <link type="text/css" rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-    <h1>
-        {{ .title }}
-    </h1>
+    <div class="navbar">
+        <h1>
+            {{ .title }}
+        </h1>
+        <form action="/" method="post">
+            <input type="text" id="search" name="search" placeholder="search">
+            <select name="category">
+                {{ if .selected }}
+                    <option value="{{ .selected }}" selected="selected">{{ .selected }}</option>
+                {{ end }}
+                {{ range .categories }}
+                    <option value="{{ . }}">{{ . }}</option>
+                {{ end }}
+            </select>
+            <button type="submit">Search</button>
+        </form>
+    </div>
+    <div class="divider"></div>
 
-    <form action="/" method="post">
-        <input type="text" id="search" name="search" placeholder="search">
-        <select name="category">
-            {{ if .selected }}
-                <option value="{{ .selected }}" selected="selected">{{ .selected }}</option>
-            {{ end }}
-            {{ range .categories }}
-                <option value="{{ . }}">{{ . }}</option>
-            {{ end }}
-        </select>
-        <button type="submit">Search</button>
-    </form>
-
-    {{ range .links }}
-        {{ if .HasImage }}
-            <div class="post image">
+    <div class="section">
+        <ul class="posts">
+        {{ range .links }}
+            <li class="post image">
                 <a href="{{ .PostLink }}">
+                    {{ if .HasImage}}
                     <img src="{{ .DataIds }}">
-                    <span>{{ .Title }}</span>
+                    {{ else }}
+                    <img src="/img/Craigslist-logotyp.jpg">
+                    {{ end }}
+                    <span>{{ .Title }} - {{ .Price }}</span>
                 </a>
-            </div>
-        {{ else }}
-            <div class="post nonimage">
-                <a href="{{ .PostLink }}">
-                    <span>{{ .Title }}</span>
-                </a>
-            </div>
+            </li>
+            <br/>
         {{ end }}
-        <br/>
-    {{ end }}
+        </ul>
+    </div>
 </body>
 </html>
