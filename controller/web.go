@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/gocolly/colly"
-	"github.com/mikecrinite/craigslist-go/model"
+	"github.com/mikecrinite/craigslist-global/model"
 )
 
 var scheme = "https://"                        // Craiglist uses HTTPS protocol
@@ -142,7 +142,7 @@ func CleanForQuery(dirty string) string {
 }
 
 func stripTitleFromUrl(url string) string {
-	l := strings.Split(url, "/") 
+	l := strings.Split(url, "/")
 	if len(l) > 2 {
 		dirtyTitle := l[len(l) - 2]
 

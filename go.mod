@@ -1,5 +1,3 @@
-module github.com/mikecrinite/craiglist-global
-
 require (
 	github.com/PuerkitoBio/goquery v1.4.1 // indirect
 	github.com/andybalholm/cascadia v1.0.0 // indirect
@@ -20,3 +18,5 @@ require (
 	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect
 	gopkg.in/yaml.v2 v2.2.1 // indirect
 )
+
+module github.com/mikecrinite/craigslist-global
