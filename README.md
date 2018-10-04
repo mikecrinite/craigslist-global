@@ -1,4 +1,6 @@
-# craigslist-global
+# craigslist-global 
+[![Build Status](https://travis-ci.org/mikecrinite/craigslist-global.svg?branch=master)](https://travis-ci.org/mikecrinite/craigslist-global)
+
 A Golang app that allows for Craigslist searches in more than one region.
 Still very much a work in progress:
 - Right now it's ironically limited to one geographical region, and that is Northeast USA (this will obviously change soon to fit the scope of the project)
