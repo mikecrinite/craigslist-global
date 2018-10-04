@@ -29,9 +29,15 @@
             <li class="post image">
                 <a href="{{ .PostLink }}">
                     {{ if .HasImage}}
-                    <img src="{{ .DataIds }}">
+                    <!-- <img src="{{ .DataIds }}"> -->
+                    <div class="thumb" style="
+                        background-image: url({{ .DataIds }})
+                    ">
                     {{ else }}
-                    <img src="/img/Craigslist-logotyp.jpg">
+                    <!-- <img src="/img/Craigslist-logotyp.jpg"> -->
+                    <div class="thumb" style="
+                        background-image: url(/img/Craigslist-logotyp.jpg)
+                    ">
                     {{ end }}
                     <span>{{ .Title }} - {{ .Price }}</span>
                 </a>
