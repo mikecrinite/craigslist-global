@@ -10,15 +10,17 @@
         </h1>
         <form action="/" method="post">
             <input type="text" id="search" name="search" placeholder="search">
-            <select name="category">
-                {{ if .selected }}
-                    <option value="{{ .selected }}" selected="selected">{{ .selected }}</option>
-                {{ end }}
-                {{ range .categories }}
-                    <option value="{{ . }}">{{ . }}</option>
-                {{ end }}
-            </select>
-            <button type="submit">Search</button>
+            <div class="select-div">
+                <select name="category">
+                    {{ if .selected }}
+                        <option value="{{ .selected }}" selected="selected">{{ .selected }}</option>
+                    {{ end }}
+                    {{ range .categories }}
+                        <option value="{{ . }}">{{ . }}</option>
+                    {{ end }}
+                </select>
+            </div>
+            <button type="submit" class="form-button">Search</button>
         </form>
     </div>
     <div class="divider"></div>
@@ -26,17 +28,21 @@
     <div class="section">
         <ul class="posts">
         {{ range .links }}
+            {{ if .PostLink }}
             <li class="post image">
                 <a href="{{ .PostLink }}">
-                    {{ if .HasImage}}
-                    <img src="{{ .DataIds }}">
-                    {{ else }}
-                    <img src="/img/Craigslist-logotyp.jpg">
-                    {{ end }}
-                    <span>{{ .Title }} - {{ .Price }}</span>
+                    <div class="thumb" style="
+                        {{ if .HasImage }}
+                        background-image: url({{ .DataIds }})
+                        {{ else }}
+                        background-image: url(/img/Craigslist-logotyp.jpg)
+                        {{ end }}
+                    " onclick="window.location = {{ .PostLink }}">
+                    <span class="outline">{{ .Title }} - {{ .Price }}</span>
                 </a>
             </li>
             <br/>
+            {{ end }}
         {{ end }}
         </ul>
     </div>
