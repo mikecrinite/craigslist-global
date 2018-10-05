@@ -26,23 +26,21 @@
     <div class="section">
         <ul class="posts">
         {{ range .links }}
+            {{ if .PostLink }}
             <li class="post image">
                 <a href="{{ .PostLink }}">
-                    {{ if .HasImage}}
-                    <!-- <img src="{{ .DataIds }}"> -->
                     <div class="thumb" style="
+                        {{ if .HasImage }}
                         background-image: url({{ .DataIds }})
-                    ">
-                    {{ else }}
-                    <!-- <img src="/img/Craigslist-logotyp.jpg"> -->
-                    <div class="thumb" style="
+                        {{ else }}
                         background-image: url(/img/Craigslist-logotyp.jpg)
-                    ">
-                    {{ end }}
-                    <span>{{ .Title }} - {{ .Price }}</span>
+                        {{ end }}
+                    " onclick="window.location = {{ .PostLink }}">
+                    <span class="outline">{{ .Title }} - {{ .Price }}</span>
                 </a>
             </li>
             <br/>
+            {{ end }}
         {{ end }}
         </ul>
     </div>
