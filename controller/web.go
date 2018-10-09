@@ -39,6 +39,7 @@ type Post struct {
 	DataIds  string // The value of the data-ids field (which is a collection of image ids)
 	Title    string // The title of the post
 	Price    string // The price of the vehicle listed by the owner
+	Region   string // The region of the post
 	HasImage bool   // Does the listing have an image
 }
 
@@ -57,7 +58,6 @@ func ScrapeCL(category string, keywords string) []Post { //[]string {
 	if &keywords == nil || keywords == "" {
 		return []Post{}
 	}
-
 	linkMap := make(map[string]Post)
 	linkChannel := make(chan Post)
 	doneChannel := make(chan bool)
@@ -91,9 +91,10 @@ func ScrapeCL(category string, keywords string) []Post { //[]string {
 		href := h.Attr("href")
 		data := h.Attr("data-ids")
 		title := ""
+		region := ""
 		price := h.ChildText("span")
 
-		linkChannel <- Post{href, data, title, price, false}
+		linkChannel <- Post{href, data, title, price, region, false}
 	})
 
 	c.OnHTML("a.button.next", func(h *colly.HTMLElement) {
@@ -125,10 +126,12 @@ func ScrapeCL(category string, keywords string) []Post { //[]string {
 	links := make([]Post, len(linkMap))
 	i := 0
 	for _, post := range linkMap {
+		title, region := stripMetaFromURL(post.PostLink)
 		imageLink, hasImg := prep(post.DataIds)
 		post.DataIds = imageLink // Get a display image
 		post.HasImage = hasImg
-		post.Title = stripTitleFromUrl(post.PostLink)
+		post.Region = region
+		post.Title = title
 		links[i] = post
 		i++
 	}
@@ -141,13 +144,17 @@ func CleanForQuery(dirty string) string {
 	return strings.Replace(dirty, " ", "+", -1)
 }
 
-func stripTitleFromUrl(url string) string {
+func stripMetaFromURL(url string) (string, string) {
+	var region string
 	l := strings.Split(url, "/")
+	r := strings.Split(url, ".")
+	if len(r) > 2 {
+		region = strings.Replace(r[0], "https://", "", 1)
+	}
 	if len(l) > 2 {
-		dirtyTitle := l[len(l) - 2]
-
-		return strings.Replace(dirtyTitle, "-", " ", -1)
+		dirtyTitle := l[len(l)-2]
+		return strings.Replace(dirtyTitle, "-", " ", -1), region
 	}
 
-	return url
+	return url, region
 }
